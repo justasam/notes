@@ -30,7 +30,7 @@ A single fiber optic cable can transmit many light pulses simultaneously using a
 - As data approaches the end user, it is converted from light pulses to electrical signals and delivered via various technologies (fiber, copper, wireless).
 - Once at the user’s location, modems, routers, and protocols reassemble and deliver the data to the user’s device.
 
-Sources: *ChatGPT, https://www.youtube.com/watch?v=x3c1ih2NJEg
+Sources: *ChatGPT, https://www.youtube.com/watch?v=x3c1ih2NJEg*
 
 ---
 #### What is a switch and why do we need it?
