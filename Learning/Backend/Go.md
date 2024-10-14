@@ -138,3 +138,57 @@ You don't need parentheses around conditions, but the braces are required.
 There is no `ternary if` in go, so you'll need to use full `if` statement even for basic conditions.
 
 #### Switch
+`switch` statements express conditionals across many branches.
+
+A basic switch statement looks like this:
+```go
+i := 2
+switch i {
+case 1:
+	fmt.Println("one")
+case 2:
+	fmt.Println("two")
+case 3:
+	fmt.Println("three")
+}
+```
+
+You can use commas to separate multiple expressions in the same `case` statement. You can also provide a `default` case:
+```go
+switch time.Now().Weekday() {
+case time.Saturday, time.Sunday:
+	fmt.Println("It's the weekend")
+default:
+	fmt.Println("It's a weekday")
+}
+```
+
+`switch` without an expression is an alternate way to express if/else logic:
+```go
+t := time.Now()
+switch {
+	case t.Hour() < 12:
+		fmt.Println("It's before noon")
+	default:
+		fmt.Println("It's after noon")
+}
+```
+
+A type `switch` compares types instead of values. It can be used to discover type of an interface value:
+```go
+whatAmI := func(i interface{}) {
+	switch t := i.(type) {
+		case bool:
+			fmt.Println("I'm a bool")
+		case int:
+			fmt.Println("I'm an int")
+		default:
+			fmt.Println("Don't know type %T\n", t)
+	}
+}
+whatAmI(true) // I'm a bool
+whatAmI(1) // I'm an int
+whatAmI("hey") // Don't know type string
+```
+
+#### Arrays
