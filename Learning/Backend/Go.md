@@ -109,3 +109,32 @@ for {
 
 `break` and `continue` are available in `for`  loops, allowing to break out of the loop or continue to the next iteration, respectively.
 
+#### If/Else
+Branching with `if` and `else` in go is straightforward:
+
+```go
+if 7%2 == 0 {
+	fmt.Println("7 is even")
+} else {
+	fmt.Println("7 is odd")
+}
+```
+
+A statement can precede conditionals; any variables declared in the statement are available in the current and subsequent branches:
+```go
+if num := 9; num < 0 {
+	fmt.Println(num, "is negative")
+} else if num < 10 {
+	fmt.Println(num, "has 1 digit")
+} else {
+	fmt.Println(num, "has multiple digits")
+}
+```
+
+You can have an `if` statement without an `else`.
+
+You don't need parentheses around conditions, but the braces are required.
+
+There is no `ternary if` in go, so you'll need to use full `if` statement even for basic conditions.
+
+#### Switch
