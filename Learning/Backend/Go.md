@@ -348,7 +348,7 @@ Source: [Go Dev Blog](https://go.dev/blog/slices-intro)
 Since `array` type definition specifies a length and element type, `array` types with the same element type but different lengths are distinct and incompatible (e.g. `[4]int` and `[5]int`).
 
 In-memory representation of `[4]int` is just four integer values laid out sequentially:
-![](Note%20Pictures/Pasted%20image%2020241015200232.png)
+![In-memory representation](../../Note%20Pictures/Pasted%20image%2020241015200232.png)
 Go's `arrays` are **values**. An `array` variable denotes the entire `array`; it is not a pointer to the first array element (as would be the case in C). This means that when you assign or pass around an array value you will make a copy of its contents. (To avoid the copy you could pass a *pointer* to the array, but then that's a pointer, not an array.) One way to think about arrays is as a sort of a struct but with indexed rather than named fields.
 
 ##### Slices
@@ -360,15 +360,15 @@ One of the ways to form a `slice` is by "slicing" an existing `slice` or `array`
 
 ##### Slice internals
 A `slice` is a descriptor of an `array` segment. It consists of a pointer to the array, the length of the segment, and its capacity (the maximum length of the segment).
-![[slice-struct.png]]
+![Slice struct](../../Note%20Pictures/slice-struct.png)
 
 `s := make([]byte, 5)` is structured like this:
-![[slice-1 (1).png]]
+![Slice of 5 bytes struct](../../Note%20Pictures/slice-1%20(1).png)
 
 The length is the number of elements referred to by the `slice`. The capacity is the number of elements in the underlying `array` (beginning at the element referred to by the slice pointer).
 
 If we were to slice `s` like so `s = s[2:4]`, the changes in the slice data structure would be the following:
-![[slice-2.png]]
+![Sliced slice structure](../../Note%20Pictures/slice-2.png)
 
 Slicing  does not copy the `slice`'s data. It creates a new slice value that points to the original `array`. This makes slice operations as efficient as manipulating array indices. Therefore, modifying the *elements* (not the `slice` itself) of a re-slice modifies the elements of the original slice:
 ```go
