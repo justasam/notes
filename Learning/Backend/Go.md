@@ -1,6 +1,6 @@
 The following notes follow a condensed resource for people with prior programming knowledge: https://gobyexample.com/hello-world.
 
-Running a go program: `go run hello-world.go`.
+Running a Go program: `go run hello-world.go`.
 
 Building a binary: `go build hello-world.go`.
 
@@ -110,7 +110,7 @@ for {
 `break` and `continue` are available in `for`  loops, allowing to break out of the loop or continue to the next iteration, respectively.
 
 #### If/Else
-Branching with `if` and `else` in go is straightforward:
+Branching with `if` and `else` in Go is straightforward:
 
 ```go
 if 7%2 == 0 {
@@ -192,4 +192,73 @@ whatAmI("hey") // Don't know type string
 ```
 
 #### Arrays
+In Go, an `array` is an indexed sequence of elements of a specific length. In typical Go code, `slices` are much more common; arrays are useful in some special scenarios, e.g:
+- **Fixed-size data structures**: e.g. a matrix with fixed dimensions.
+- **Performance-critical code**: `arrays` can be slightly faster, as they don't require an overhead associated with `slices` (such as maintaining a separate header with the length and capacity).
+- **Memory constraints**: `arrays` are typically allocated on the stack, whereas `slices` typically involve heap allocation, which means `arrays` can be more efficient in terms of memory access times and garbage collection. This can be crucial in low-memory environments, such as embedded systems.
+- **Fixed-length hashing or encoding algorithms**: Many cryptographic algorithms (such as SHA-256) operate on fixed block sizes.
+- **Interop with C libraries**: If you are using Go's `cgo` to interact with C libraries, certain functions might require fixed-size `arrays`.
+
+Here's an example of an array that will hold exactly 5 `ints`. The type of elements and the length are both part of the `array`'s type. By default, the array is zero-valued:
+```go
+var a [5]int
+fmt.Println(a) // [0 0 0 0 0]
+```
+
+We can set a value using `array[index] = value` syntax, and get it with `array[index]`:
+```go
+a[4] = 100
+fmt.Println(a[4]) // 100
+```
+
+The built-in `len` returns the length of an `array`:
+```go
+var a [5]int
+fmt.Println(len(a)) // 5
+```
+
+You can declare and initialise an array in one line with this syntax:
+```go
+b := [5]int{1, 2, 3, 4, 5}
+```
+
+You can have the complier count the elements with `...`:
+```go
+b := [...]int{1, 2, 3, 4, 5}
+```
+
+If you specify the index with `:`, the elements in-between will be zeroed:
+```go
+b := [...]int{100, 3: 400, 500}
+fmt.Println(b) // [100 0 0 400 500]
+```
+
+Array types are one-dimensional, but you can compose types to build multi-dimensional data structures:
+```go
+var twoD [2][3]int
+for i := 0; i < 2; i++ {
+	for j := 0; j < 3; j++ {
+		twoD[i][j] = i + j
+	}
+}
+fmt.Println(twoD) // [[0 1 2] [1 2 3]]
+```
+
+You can create and initialise multi-dimensional arrays at once too:
+```go
+twoD := [2][3]int{
+	{0, 1, 2},
+	{1, 2, 3},
+}
+fmt.Println(twoD) // [[0 1 2] [1 2 3]]
+```
+
+#### Slices
+`Slices` are an important data type in Go, giving more powerful interface to sequences than `arrays`.
+
+Unlike `arrays`, `slices` are only typed by the elements they contain, not the number of them. An uninitialised `slice` equals to `nil` and has the length 0:
+```go
+var a = []string
+fmt.Println(a, a == nil, len(a) == 0) // [] true true
+```
 
