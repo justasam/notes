@@ -348,7 +348,7 @@ Source: [Go Dev Blog](https://go.dev/blog/slices-intro)
 Since `array` type definition specifies a length and element type, `array` types with the same element type but different lengths are distinct and incompatible (e.g. `[4]int` and `[5]int`).
 
 In-memory representation of `[4]int` is just four integer values laid out sequentially:
-![](Pasted%20image%2020241015200232.png)
+![](Note%20Pictures/Pasted%20image%2020241015200232.png)
 Go's `arrays` are **values**. An `array` variable denotes the entire `array`; it is not a pointer to the first array element (as would be the case in C). This means that when you assign or pass around an array value you will make a copy of its contents. (To avoid the copy you could pass a *pointer* to the array, but then that's a pointer, not an array.) One way to think about arrays is as a sort of a struct but with indexed rather than named fields.
 
 ##### Slices
