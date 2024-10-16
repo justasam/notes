@@ -44,8 +44,7 @@ One of the goals of web performance is to minimize the amount of time navigation
 The first step of navigating to a web page is finding where the assets for the page are located.
 The browser requests a DNS lookup, after which the IP will likely be cached for a time, which speeds up subsequent requests.
 
-More on DNS: [[What is DNS]]
-
+More on DNS: [What is DNS](What%20is%20DNS.md)
 ##### TCP handshake
 Once the IP address is known, the browser sets up a connection to the server via a TCP three-way handshake. This mechanism is designed so that two entities attempting to communicate can negotiate the parameters of the network TCP socket connection before transmitting data, ofter over HTTPS.
 
