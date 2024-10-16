@@ -14,6 +14,6 @@ Source: *[MDN](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/W
 Domain names are all managed by domain registries, which delegate the reservation of domain names to registrars.
 A domain name registrar provides domain name registrations to the general public. A common misconception is that registrars sell domain names; these domain names are actually owned by registries and can only be leased by users.
 
-![[ht5khx7f.bmp]]
+![Illustration of how domain names are managed](../../Note%20Pictures/ht5khx7f.bmp)
 
 Source: *[Cloudflare](https://www.cloudflare.com/en-gb/learning/dns/glossary/what-is-a-domain-name/)*

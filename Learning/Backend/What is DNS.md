@@ -9,7 +9,7 @@ There are 4 DNS servers involved in loading a webpage:
 - **TLD nameserver** - the top level domain server can be thought of as a specific rack of books in a library. It hosts the last portion of a hostname (In example.com, the TLD server is "com").
 - **Authoritative nameserver** - this final nameserver can be thought of as a dictionary on a rack of books, in which a specific name can be translated into its definition. It is the last stop in the nameserver query. If it has access to the requested record, it will return the IP address for the requested hostname back to the DNS recursor that made the initial request.
 
-![[Pasted image 20241006180421.png]]
+![DNS record request sequence](../../Note%20Pictures/Pasted%20image%2020241006180421.png)
 
 #### The 8 steps in a DNS lookup
 When DNS information is cached, steps are skipped from DNS lookup process which makes it quicker. Steps below assume nothing is cached.

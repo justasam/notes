@@ -1,7 +1,8 @@
 #### What is a web browser?
 A web browser is a software program that enables a user to access information on the Internet via the World Wide Web. It acts like a translator, taking information from web servers and displaying it to the user as a web page.
 
-![[Pasted image 20241008215723.png]]
+![Schema of web browser components](../../Note%20Pictures/Pasted%20image%2020241008215723.png)
+
 #### Browser Components
 Some key components of browsers include:
 - **User Interface (UI)** - you interact with it directly. It includes the address bar, tabs, etc.
@@ -57,7 +58,7 @@ TCP's three-way handshaking technique is often referred to as "SYN-SYN-ACK" -- o
 ##### TLS negotiation
 For secure connections established over HTTPS, another "handshake" is required. This handshake (TLS negotiation) determines which cipher will be used to encrypt the communication, verifies the server, and establishes that a secure connection is in place before beginning the actual transfer of data. This requires five more round trips to the server before the request for content is actually sent.
 
-![[Pasted image 20241008222251.png]]
+![TLS negotiation](../../Note%20Pictures/Pasted%20image%2020241008222251.png)
 
 More: TBD
 
