@@ -410,3 +410,60 @@ a = append(a, b...) // equivalent to "append(a, b[0], b[1], b[2])"
 
 ##### A possible "gotcha"
 Since re-slicing a `slice` doesn't make a copy of the underlying `array`, the full `array` will be kept in memory until it is no longer referenced. Occasionally this can cause the program to hold all the data in memory when only a small piece of it is needed.
+
+#### Maps
+`Maps` are Go's built-in *associative data type* (sometimes called *hashes* or *dicts* in other languages).
+
+To create an empty map, builtin `make` should be used (`make(map[key-type]val-type)`):
+```go
+m := make(map[string]int)
+```
+
+`name[key] = val` syntax is used to set key/val pairs:
+```go
+m["k1"] = 7
+```
+
+Printing a map will show all of its key/value pairs:
+```go
+m := make(map[string]int)
+m["k1"] = 7
+m["k2"] = 14
+fmt.Println("map:", m) // map: map[k1:7 k2:14]
+```
+
+If the key doesn't exist, the *zero value* of the value type is returned.
+
+The builtin `len` returns the number of key/value pairs when called on a `map`.
+
+The builtin `delete` removes key/value pairs from a `map`.
+
+The builtin `clear` removes *all* key/value pairs from a `map`.
+
+The optional second return value when getting a value from a `map` indicates if it has the key. Unneeded value can be ignored with the *blank identifier* `_` (in this case, the value itself):
+```go
+m := make(map[string]int)
+_, hasKey := m["k5"]
+fmt.Println(hasKey) // false
+```
+
+A `map` can be declared and initialised in the same line:
+```go
+n := map[string]int{"foo": 1, "bar": 2}
+```
+
+The `maps` package contains a number of useful utility functions for `maps`:
+```go
+import (
+	"fmt"
+	"maps"
+)
+
+n := map[string]int{"a": 1, "b": 2}
+n2 := map[string]int{"a": 1, "b": 2}
+if maps.Equal(n, n2) {
+	fmt.Println("n == n2") // n == n2
+}
+```
+
+#### Functions
