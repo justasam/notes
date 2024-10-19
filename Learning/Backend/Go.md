@@ -530,3 +530,54 @@ sum(nums...) // sum: 10
 ```
 
 ##### Closures
+Go supports *anonymous functions*, which can form *closures*. Anonymous functions are useful when you want to define a function inline, without having to name it.
+
+This function `intSeq` returns another function, which is defined anonymously in the body of `intSeq`. The returned function *closes over* the variable `i` to form a *closure*:
+```go
+func intSeq() func() int {
+	i := 0
+	return func() int {
+		i++
+		return i
+	}
+}
+
+func main() {
+	nextInt := intSeq()
+	fmt.Println(nextInt()) // 1
+	fmt.Println(nextInt()) // 2
+
+	newInts := intSeq()
+	fmt.Println(newInts()) // 1
+}
+```
+
+##### Recursion
+Go supports *recursive functions*, i.e. functions which call themselves.
+
+Here's an example of a recursive function, which calls itself until it reaches the base case of `fact(0)`:
+```go
+func fact(n int) int {
+	if n == 0 {
+		return 1
+	}
+	return n * fact(n-1)
+}
+```
+
+*Anonymous functions* can also be recursive, but this requires explicitly declaring a variable with `var` to store the function before it's defined:
+```go
+var fib func(n int) int
+
+fib = func (n int) int {
+	if n < 2 {
+		return n
+	}
+
+	return fib(n-1) + fib(n-2) // since fib was previously declared, Go knows which function to call with fib here.
+}
+```
+
+#### Range over Builtin Types
+
+
