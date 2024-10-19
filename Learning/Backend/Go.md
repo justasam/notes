@@ -467,3 +467,66 @@ if maps.Equal(n, n2) {
 ```
 
 #### Functions
+`Functions` are central in Go. 
+
+Here's a `function` which takes two `ints` and returns their sum as an `int`:
+```go
+func plus(a int, b int) int {
+	return a + b
+}
+```
+Go requires explicit returns -- it won't automatically return the value of the last expression.
+
+When multiple consecutive parameters have the same type, it can be omitted up to the final parameter, which declares the type:
+```go
+func plusPlus(a, b, c int) int {
+	return a + b + c
+}
+```
+
+A function can be called with `name(args)` syntax:
+```go
+sum := plusPlus(1, 4, 5) // sum == 10
+```
+
+##### Multiple Return Values
+Go has builtin support for *multiple* return values. This feature is often used in idiomatic Go (writing Go code which follows the conventions, patterns and best practices), for example to return both result and error values from a function.
+
+The `(int int)` in this function signature shows that the function returns two `ints`:
+```go
+func vals() (int, int) {
+	return 3, 7
+}
+```
+
+We can use the different return values with *multiple assignment*:
+```go
+a, b := vals()
+```
+
+If only a subset of return values is needed, *blank identifier* (`_`) can be used:
+```go
+_, c:= vals()
+```
+
+##### Variadic Functions
+*Variadic functions* can be called with any number of trailing arguments. For example, `fmt.Println` is a common variadic function.
+
+To define a variadic function, you should use `...` before the type of the last argument. Inside the function, the arguments are treated as a `slice` of that type:
+```go
+func sum(nums ...int) {
+	total := 0
+	for _, num := range nums {
+		total += num
+	}
+	fmt.Println("sum:", total)
+}
+```
+
+If you already have multiple args in a `slice`, you can apply them to a variadic function using `func(slice...)` like this:
+```go
+nums := []int{1, 2, 3, 4}
+sum(nums...) // sum: 10
+```
+
+##### Closures
