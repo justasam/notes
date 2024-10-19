@@ -579,5 +579,65 @@ fib = func (n int) int {
 ```
 
 #### Range over Builtin Types
+`range` iterates over elements in a variety of builtin data structures.
 
+Here's how `range` is used to iterate numbers in `arrays` or `slices`:
+```go
+nums := []int{2, 3, 4}
+sum := 0
+for index, num := range nums {
+	sum += num
+}
+// sum == 9
+```
+`range` on `arrays` and `slices` provides both the index and value for each entry. If any of these is not needed, it can be ignored with the blank identifier `_`.
 
+`range` on `map` iterates over key/value pairs:
+```go
+kvs := map[string]string{"a": "apple", "b": "bannana"}
+for k, v := range kvs {
+	fmt.PrintF("%s -> %s\n", k, v) // a -> apple
+}
+```
+
+`range` can also iterate over just the keys of a `map`:
+```go
+for k := range kvs {
+	fmt.Println("key:", k) // key: a
+}
+```
+
+`range` on `strings` iterates over Unicode code points. The first value is the starting byte index of the `rune` and the second is the `rune` itself:
+```go
+for i, c := range "go" {
+	fmt.Println(i, c)
+}
+// 0 103
+// 1 111
+```
+
+#### Pointers
+Go supports `pointers`, allowing to pass references to values and records.
+
+Non-pointer function parameters have arguments passed to them by value:
+```go
+func zeroval(ival int) { // passed by value
+	ival = 0
+}
+i := 1
+zeroval(i)
+fmt.Println("zeroval:", i) // zervoal: 1
+```
+
+In contrast, `pointer` function parameters receive a memory address of the value. The pointer can then be _dereferenced_, and a new value can be assigned to that address.
+```go
+func zeroptr(iptr *int) {
+	*iptr = 0 // dereferences pointer and sets it's value
+}
+i := 1
+zeroptr(&i)
+fmt.Println("zeroptr:", i) // zeroptr: 0
+```
+The `&i` syntax gives the memory address of `i`, i.e. a `pointer` to `i`. 
+
+#### Strings and Runes
