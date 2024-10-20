@@ -820,4 +820,81 @@ for i, w := 0, 0; i < len(nihongo); i += w {
 Sources: [ChatGPT](https://chatgpt.com), [Go Dev Blog](https://go.dev/blog/strings).
 
 #### Structs
+Go's `structs` are typed collections of fields. They are useful for grouping data together to form records.
 
+This `Person` struct type has `name` and `age` fields:
+```go
+type Person struct {
+	Name string
+	Age  int
+}
+```
+
+`newPerson` constructs a new person `struct` with the given name:
+```go
+func newPerson(name string) *Person {
+	p := Person{Name: name}
+	p.Age = 42
+	return &p
+}
+```
+Go is a garbage collected language; you can safely return a pointer to a local variable - it will only be cleaned up by the garbage collector when there are no active references to it.
+We return a `pointer` rather than `struct` itself to avoid unnecessary copying.
+
+This syntax creates a new `struct`:
+```go
+fmt.Println(Person{"Bob", 20}) // {Bob 20}
+```
+
+You can name the fields when initialising a `struct`:
+```go
+fmt.Println(Person{Age: 30, Name: "Alice"}) // {Alice 30}
+```
+
+Omitted fields will be zero-valued:
+```go
+fmt.Println(Person{Name: "Fred"}) // {Fred 0}
+```
+
+An `&` prefix yields a pointer to the `struct`:
+```go
+fmt.Println(&Person{Name: "Ann", Age: 40}) // &{Ann 40}
+```
+
+It's idiomatic to encapsulate new `struct` creation in constructor functions:
+```go
+fmt.Println(newPerson("Jon")) // &{Jon 42}
+```
+
+Access struct fields with a dot:
+```go
+s := Person{Name: "Sean", Age: 50}
+fmt.Println(s.Name) // Sean
+```
+
+You can also use dots with `struct pointers` - the `pointers` are automatically dereferenced:
+```go
+sp := &s
+fmt.Println(sp.Age) // 50
+```
+
+`Structs` are mutable:
+```go
+sp.Age = 51
+fmt.Println(sp.Age) // 51
+```
+
+If a `struct` type is only used for a single value, we don't have to give it a name. The value can have an anonymous `struct` type:
+```go
+dog := struct {
+	name   string
+	isGood bool
+}{
+	"Rex",
+	true,
+}
+fmt.Println(dog) // {Rex true}
+```
+This technique is commonly used for *table-driven tests* (e.g. to define the inputs and expected outputs).
+
+#### Methods
