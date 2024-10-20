@@ -641,3 +641,183 @@ fmt.Println("zeroptr:", i) // zeroptr: 0
 The `&i` syntax gives the memory address of `i`, i.e. a `pointer` to `i`. 
 
 #### Strings and Runes
+A Go `string` is a read-only slice of bytes. The language and the standard library treat strings specially - as containers of text encoded in *UTF-8*. In other languages, strings are made of "characters". In Go, the concept of a character is called a `rune` - it's an integer that represents a Unicode code point.
+
+`s` is a `string` assigned a literal value representing the word "hello" in the Thai language. Go string literals are UTF-8 encoded text:
+```go
+const s = "สวัสดี"
+```
+
+Since `strings` are equivalent to `[]byte`, this will produce the length of raw bytes stored within:
+```go
+fmt.Println("Len:", len(s)) // Len: 18
+```
+
+Indexing into a `string` produces the raw byte values at each index. This loop generates the hex values of all the bytes that constitute code points in `s`:
+```go
+for i := 0; i < len(s); i++ {
+	fmt.Printf("%x ", s[i])
+}
+// e0 b8 aa e0 b8 a7 e0 b8 b1 e0 b8 aa e0 b8 94 e0 b8 b5
+```
+
+To count how many `runes` are in `string`, we can use the `utf8` package. Note that the run-time of `RuneCountInString` depends on the size of the string, because it has to decode each UTF-8 `rune` sequentially:
+```go
+fmt.Println("Rune count:", utf8.RuneCountInString(s))
+// Rune count: 6
+```
+
+Values enclosed in single quotes are `rune` literals. We can compare a `rune` value to a `rune` literal directly:
+```go
+func examineRune(r rune) {
+	if r == 't' {
+		fmt.Println("found tee")
+	} else if r == "ส" {
+		fmt.Println("found so sua")
+	}
+}
+```
+
+##### ASCII vs Unicode vs UTF-8
+- **ASCII**: A small, basic set of 128 characters. It uses 7 bits to represent characters.
+- **Unicode**: A huge collection of characters from every language.
+- **UTF-8**: A way to store Unicode characters efficiently. It's a variable-length encoding, meaning it can use 1 to 4 bytes to represent a character (for example, it uses 1 byte for ASCII characters, so it's compatible with ASCII).
+
+Source: [ChatGPT](https://chatgpt.com).
+
+##### What is a string?
+In Go, a `string` is a read-only `slice` of bytes. The `string` holds *arbitrary* bytes. It is not required to hold Unicode text, UTF-8 text, or any other predefined format.
+
+Here's a `string` literal that uses the `\xNN` notation to define a `string` constant holding some peculiar byte values:
+```go
+const sample = "\xbd\xb2\x3d\xbc\x20\xe2\x8c\x98"
+```
+
+##### Printing strings
+Because some of the bytes in our sample `string` are not valid ASCII, not even valid UTF-8, printing the string directly will produce ugly output:
+```go
+fmt.Println(sample) // ��=� ⌘
+```
+
+To find out what that `string` really holds, we need to take it apart and examine the pieces. There are several ways to do this, e.g.:
+```go
+for i := 0; i < len(sample); i++ {
+	fmt.Printf("%x ", sample[i])
+}
+// bd b2 3d bc 20 e2 8c 98
+```
+As implied up front, indexing string accesses individual bytes, not characters.
+
+There's a shorter way to generate presentable output for a messy string: `%x` (hexadecimal) format verb of `fmt.Printf`. It just dumps out the sequential bytes of the `string` as hexadecimal digits, two per byte:
+```go
+fmt.Printf("%x\n", sample) // bdb23dbc20e28c98
+```
+
+A nice trick is to use the "space" flag in that format, which makes the bytes come out with spaces in-between:
+```go
+fmt.Printf("% x\n", sample) // bd b2 3d bc 20 e2 8c 98
+```
+
+There's more: the `%q` (quoted) verb will escape any non-printable byte sequences in a `string` so that the output is unambiguous:
+```go
+fmt.Printf("%q\n", sample) // "\xbd\xb2=\xbc ⌘"
+```
+If we squint at that, we can see ASCII equals sign, along with a regular space, and at the end appears the Swedish "Place of Interest" symbol (looped square). That symbol has Unicode value U+2318, encoded as UTF-8 by the bytes after the space (hex value `20`): `e2 8c 98`.
+
+A "plus" flag to the `%q` verb can be used to escape not only non-printable sequences, but also any non-ASCII bytes, all while interpreting UTF-8:
+```go
+fmt.Printf("%+q\n", sample) // "\xbd\xb2=\xbc \u2318"
+```
+
+These printing techniques are good to know when debugging the contents of strings. They behave exactly the same for byte `slices` as they do for `strings`.
+
+##### UTF-8 and string literals
+As we saw, indexing a `string` yields its bytes, not its characters: a `string` is just a bunch of bytes. That means that when we store a character value in a `string`, we store its byte-at-a-time representation.
+
+Here's a simple program that prints a `string` constant with a single character three different ways: once as a plain `string`, once as an ASCII-only quoted `string`, and once as individual bytes in hexadecimal. To avoid any confusion, we create a "raw string", enclosed by back quotes, so it can contain only literal text (regular strings, enclosed by double quotes, can contain escape sequences):
+```go
+func main() {
+	const placeOfInterest = `⌘`
+
+	fmt.Printf("plain string: ")
+	fmt.Printf("%s", placeOfInterest)
+	fmt.Printf("\n")
+	// plain string: ⌘
+
+	fmt.Printf("quoted string: ")
+	fmt.Printf("%+q", placeOfInterest)
+	fmt.Printf("\n")
+	// quoted string: "\u2318"
+
+	fmt.Printf("hex bytes: ")
+	for i := 0; i < len(placeOfInterest); i++ {
+		fmt.Printf("%x ", placeOfInterest[i])
+	}
+	fmt.Printf("\n")
+	// hex bytes: e2 8c 98
+}
+```
+
+It's worth taking a moment to explain how the UTF-8 representation of the `string` was created. The simple fact is: it was created when the source code was written.
+
+Source code in Go is *defined* to be UTF-8 text; no other representation is allowed. That implies that when, in the source code, we write the text
+```go
+`⌘`
+```
+the text editor used to create the program places the UTF-8 encoding of the symbol ⌘ into the source text. When we print out the hexadecimal bytes, we're just dumping the data the editor placed in the file.
+
+In short, Go source code is UTF-8, so *the source code for the string literal is UTF-8 text*. If that `string` literal contains no escape sequences, which a raw string cannot, the constructed `string` will hold exactly the source text between the quotes.
+
+Go's strings are not always UTF-8: only `string` literals are. `String` *values* can contain arbitrary bytes.
+
+To summarise, `strings` can contain arbitrary bytes, but when constructed from string literals, those bytes are (almost always, unless escaped) UTF-8.
+
+##### Code points, characters, and runes
+In Unicode, a "character" is ambiguous, so the standard uses "code point" to represent a single value. For example, U+2318 represents `⌘`, and U+0061 represents `a`. However, some characters, like `à`, can have multiple representations: U+00E0 or a combination of U+0061 (`a`) and U+0300 (combining grave accent). A character may correspond to different sequences of code points and UTF-8 bytes, so we should be cautious when using the term "character" in computing. To address the different representations, *normalisation* can be used -- it enforces a consistent form of representation.
+
+"Code point" is a bit of a mouthful, so Go introduces a shorter term for the concept: `rune`. The term appears in the libraries and source code, and means exactly the same as "code point", with one interesting addition.
+
+The Go language defines the word `rune` as an alias for the type `int32`, so programs can be clear when an integer value represents a code point. Moreover, what you might think of a character constant is called a `rune` constant in Go. The type and value of the expression `'⌘'` is `rune` with integer value `0x2318`.
+
+To summarise, here are the salient points:
+- Go source code is always UTF-8.
+- A `string` holds arbitrary bytes.
+- A `string` literal, absent byte-level escapes, always holds valid UTF-8 sequences.
+- Those sequences represent Unicode code points, called `runes`.
+- No guarantee is made in Go that characters in strings are normalised.
+
+##### Range loops
+Besides the axiomatic detail that Go source code is UTF-8, there's really one way that Go treats UTF-8 `strings` specially, and that is when using a `for range` loop on a `string`: it decodes one UTF-8-encoded `rune` on each iteration. The index of the loop is the starting position of the current `rune`, measured in bytes, and the code point is its value:
+```go
+const nihongo = "日本語"
+for index, runeValue := range nihongo {
+	fmt.Printf("%#U starts at byte position %d\n", runeValue, index)
+}
+// U+65E5 '日' starts at byte position 0
+// U+672C '本' starts at byte position 3
+// U+8A9E '語' starts at byte position 6
+```
+
+##### Libraries
+Go's standard library provides strong support for interpreting UTF-8 text. If a `for range` loop isn't sufficient, chances are the facility needed is provided by a package in the library.
+
+The most important such package is `unicode/utf8`, which contains helper routines to validate, disassemble, and reassemble UTF-8 strings. Here's a program equivalent to the `for range` example above, but using `DecodeRuneInString` function from that package to do the work:
+```go
+const nihongo = "日本語"
+for i, w := 0, 0; i < len(nihongo); i += w {
+	runeValue, width := utf8.DecodeRuneInString(nihongo[i:])
+	fmt.Printf("%#U starts at byte position %d\n", runeValue, i)
+	w = width
+}
+// U+65E5 '日' starts at byte position 0
+// U+672C '本' starts at byte position 3
+// U+8A9E '語' starts at byte position 6
+```
+
+##### Conclusion
+`Strings` are built from bytes so indexing them yields bytes, not characters. A `string` might not even hold characters, and the definition of "character" is ambiguous.
+
+Sources: [ChatGPT](https://chatgpt.com), [Go Dev Blog](https://go.dev/blog/strings).
+
+#### Structs
+
