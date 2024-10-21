@@ -898,3 +898,38 @@ fmt.Println(dog) // {Rex true}
 This technique is commonly used for *table-driven tests* (e.g. to define the inputs and expected outputs).
 
 #### Methods
+Go supports `methods` defined on `struct` types.
+
+This `area` method has a *receiver* type of `*rect`:
+```go
+type rect struct {
+	width, height int
+}
+
+func (r *rect) area() int {
+	return r.width * r.height
+}
+```
+
+`Methods` can be defined for either pointer or value receiver types. Here's an example of a value receiver:
+```go
+func (r rect) perim() int {
+	return 2*r.width + 2*r.height
+}
+```
+
+These `methods` are then available to be called on our `struct`:
+```go
+r := rect{width: 10, height: 5}
+fmt.Println(r.area()) // 50
+fmt.Println(r.perim()) // 30
+```
+
+Go automatically handles conversion between values and pointers for `method` calls. Pointer receiver type is used to avoid copying on method calls or mutating the receiving `struct`.
+```go
+rp := &r
+fmt.Println(rp.area()) // 50
+fmt.Println(rp.perim()) // 30
+```
+
+#### Interfaces
