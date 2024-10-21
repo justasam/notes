@@ -925,7 +925,7 @@ fmt.Println(r.area()) // 50
 fmt.Println(r.perim()) // 30
 ```
 
-Go automatically handles conversion between values and pointers for `method` calls. Pointer receiver type is used to avoid copying on method calls or mutating the receiving `struct`.
+Go automatically handles conversion between values and pointers for method calls. Pointer receiver type is used to avoid copying on method calls or mutating the receiving `struct`.
 ```go
 rp := &r
 fmt.Println(rp.area()) // 50
@@ -933,3 +933,73 @@ fmt.Println(rp.perim()) // 30
 ```
 
 #### Interfaces
+`Interfaces` are named collections of method signatures.
+
+Here's a basic interface for geometric shapes:
+```go
+type geometry interface {
+	area() float64
+	perim() float64
+}
+```
+
+To implement an interface in Go, we just need to implement all the methods in the interface:
+```go
+type rect struct {
+	width, height float64
+}
+type circle struct {
+	radius float64
+}
+
+func (r rect) area() float64 {
+	return r.width * r.height
+}
+func (r rect) perim() float64 {
+	return 2*r.width + 2*r.height
+}
+
+func (c circle) area() float64 {
+	return math.Pi * c.radius * c.radius
+}
+func (c circle) perim() float64 {
+	return 2 * math.Pi * c.radius
+}
+```
+
+If a variable has an interface type, we can call methods that are in the named interface:
+```go
+func measure(g geometry) {
+	fmt.Println(g)
+	fmt.Println(g.area())
+	fmt.Println(g.perim())
+}
+```
+
+The `circle` and `rect` struct types both implement the `geometry` interface so we can use instances of these structs as arguments to `measure`:
+```go
+r := rect{width: 3, height: 4}
+c := circle{radius: 5}
+
+measure(r)
+// {3 4}
+// 12
+// 14
+measure(c)
+// {5}
+// 78.53981633974483
+// 31.41592653589793
+```
+
+##### The `interface{}` Type
+The `interface{}` type, also known as the _empty interface_, can cause confusion but is simple in concept. It’s an interface with no methods. Since all types in Go implement at least zero methods, _every type satisfies the empty interface_.
+
+For example, consider a function `DoSomething` that accepts an `interface{}`:
+```go
+func DoSomething(v interface{}) {
+	// ... 
+}
+```
+This function can accept any type. However, `v` isn’t of any specific type but rather `interface{}`. Internally, an interface value consists of two components: one pointer to a method table for the underlying type and another pointer to the actual data being stored.
+
+#### Enums
