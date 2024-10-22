@@ -1003,3 +1003,52 @@ func DoSomething(v interface{}) {
 This function can accept any type. However, `v` isn’t of any specific type but rather `interface{}`. Internally, an interface value consists of two components: one pointer to a method table for the underlying type and another pointer to the actual data being stored.
 
 #### Enums
+*Enumerated types* (enums) are a special case of sum types (data structures used to hold a value that could take on several different, but fixed, types). An enum is a type that has a fixed number of possible values, each with a distinct name. Go doesn't have an enum type as a distinct language feature, but enums are simple to implement using existing language idioms.
+
+Our enum type `ServerState` has an underlying `int` type:
+```go
+type ServerState int
+```
+
+The possible values for `ServerState` are defined as constants. The special keyword `iota` generates successive constant values automatically (starting at 0, increasing by 1 with each use):
+```go
+const (
+	StateIdle ServerState = iota
+    StateConnected // type is inferred for this and subsequent constants
+    StateError
+    StateRetrying
+)
+```
+
+We can implement `fmt.Stringer` interface so that values of `ServerState` can be printed out or converted to strings. It requires values to have a `String()` method defined:
+```go
+var stateName = map[ServerState]string {
+	StateIdle:      "idle",
+	StateConnected: "connected",
+	StateError:     "error",
+	StateRetrying:  "retrying",
+}
+
+func (ss ServerState) String() string {
+	return stateName[ss]
+}
+```
+This can get cumbersome if there are many possible values. In such cases the *stringer tool* can be used in conjunction with `go:generate` to automate the process.
+
+The `ServerState` enum can then be used to determine the next state:
+```go
+func transition(s ServerState) ServerState {
+    switch s {
+    case StateIdle:
+        return StateConnected
+    case StateConnected, StateRetrying:
+        return StateIdle
+    case StateError:
+        return StateError
+    default:
+        panic(fmt.Errorf("unknown state: %s", s))
+    }
+}
+```
+
+#### Struct Embedding
